@@ -165,6 +165,9 @@ async function loadMine() {
       $('input-server').value = myProfile.server || 'asia';
     }
     if (privSnap.exists()) $('input-uid').value = privSnap.data().genshinUid || '';
+    // まだ登録していない人は、フレンド承認板(25_FriendBoard)のプロフィールから名前・UID・サーバーを
+    // 最初から入れておく(同じ共有IDなので、承認板に登録済みならそのまま使える)。保存するまでは反映されない
+    if (!pSnap.exists()) await prefillFromFriendBoard(!privSnap.exists());
   } catch (e) {
     console.error('[mine] load failed', e);
   }
@@ -178,6 +181,22 @@ async function loadMine() {
     if (!prev || JSON.stringify(prev.counts) !== JSON.stringify(myProfile.counts)) editCounts = { ...(myProfile.counts || {}) };
     renderMineGrid();
   }));
+}
+
+async function prefillFromFriendBoard(fillUid) {
+  try {
+    const snap = await getDoc(doc(db, 'friendBoardProfiles', myId));
+    if (!snap.exists()) return;
+    const d = snap.data();
+    if (d.displayName && !$('input-name').value) $('input-name').value = String(d.displayName).slice(0, 20);
+    if (fillUid && d.genshinUid && !$('input-uid').value) $('input-uid').value = String(d.genshinUid).slice(0, 12);
+    if (d.server && ['asia', 'america', 'europe', 'sar'].includes(d.server)) $('input-server').value = d.server;
+    const msg = $('mine-msg');
+    msg.className = 'board-form-msg';
+    msg.textContent = 'フレンド承認板のプロフィールから、名前・UID・サーバーを入れておきました。確認して保存してください。';
+  } catch (e) {
+    console.warn('[mine] friend board prefill failed', e);
+  }
 }
 
 $('mine-form').addEventListener('submit', async (ev) => {
