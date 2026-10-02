@@ -2199,3 +2199,11 @@ body.portal-page {
 .arcana-about summary { cursor: pointer; font-weight: bold; text-align: center; color: #555; }
 .arcana-about-body { font-size: 13px; color: #444; line-height: 1.7; }
 .arcana-about-body ol { padding-left: 1.4em; }
+
+/* マイアルカナ: 入力欄は従来の幅(480px)のまま、カード一覧だけ広く使う(横6枚でも小さくならないように) */
+#mine-form { max-width: 860px; }
+#mine-form > .board-form-row-pair,
+#mine-form > .board-form-row,
+#mine-form > .board-form-group-title,
+#mine-form > .arcana-grid-help { width: 100%; max-width: 480px; margin-left: auto; margin-right: auto; }
+.arcana-cell-name { font-size: 13px; }
