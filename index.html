@@ -30,7 +30,7 @@
     <meta property="og:description" content="被ったアルカナを交換する相手を、同じサーバーから探せます。UIDは交換が成立した相手にだけ公開されます。">
     <!-- 公開時に追加: og:image / og:image:width / og:image:height / twitter:card / twitter:site -->
 
-    <link rel="stylesheet" href="styles.css?v=1.0" />
+    <link rel="stylesheet" href="styles.css?v=1.1" />
 
     <link rel="icon" sizes="192x192" href="public/scripts/favicon_io/android-chrome-192x192.png">
     <link rel="icon" sizes="512x512" href="public/scripts/favicon_io/android-chrome-512x512.png">
@@ -68,7 +68,7 @@
                         <div class="board-form-row-head">
                             <label for="input-name">名前<span class="board-required-mark">＊</span></label>
                         </div>
-                        <input type="text" id="input-name" maxlength="20" placeholder="交換相手に表示される名前" />
+                        <input type="text" id="input-name" maxlength="20" placeholder="ゲーム内の名前" />
                     </div>
                     <div class="board-form-row">
                         <div class="board-form-row-head">
@@ -107,15 +107,6 @@
             <h2>交換相手をさがす</h2>
             <p class="board-requests-desc" id="search-desc"></p>
             <div class="arcana-search-controls">
-                <label class="arcana-search-server hidden" id="search-server-wrap">
-                    サーバー
-                    <select id="search-server">
-                        <option value="asia" selected>Asia</option>
-                        <option value="america">America</option>
-                        <option value="europe">Europe</option>
-                        <option value="sar">TW,HK,MO</option>
-                    </select>
-                </label>
                 <button type="button" class="board-card-apply-msg-btn" id="search-refresh-btn">一覧を更新</button>
             </div>
             <div class="board-list" id="search-list"></div>
@@ -178,9 +169,9 @@
         </div>
     </div>
 
-    <span id="site-version" class="site-version">v1.0</span>
+    <span id="site-version" class="site-version">v1.1</span>
 
-    <script type="module" src="app.js?v=1"></script>
+    <script type="module" src="app.js?v=2"></script>
     <script src="https://uko05.github.io/TopPage00/shared/sidebar.js"></script>
 </body>
 </html>

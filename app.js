@@ -229,8 +229,9 @@ async function loadSearch() {
   const list = $('search-list');
   const desc = $('search-desc');
   const ready = isLoggedIn() && myProfile;
-  $('search-server-wrap').classList.toggle('hidden', !!ready);
-  const server = ready ? myProfile.server : $('search-server').value;
+  // 交換できるのは同じサーバーの人だけなので、サーバーは自分の登録から決める(選ぶ欄は置かない)。
+  // まだ登録していない人には、全サーバーの人をサーバー名付きで見せる
+  const server = ready ? myProfile.server : null;
 
   let q;
   let missing = [];
@@ -247,9 +248,9 @@ async function loadSearch() {
       orderBy('lastActiveAt', 'desc'), limit(60));
   } else {
     desc.textContent = isLoggedIn()
-      ? 'マイアルカナを保存すると、あなたが持っていないカードを出せる人だけに絞り込めます。'
-      : '交換に出せるカードがある人を表示しています。申請するにはアカウント登録とマイアルカナの保存が必要です。';
-    q = query(collection(db, 'arcanaTradeProfiles'), where('server', '==', server), orderBy('lastActiveAt', 'desc'), limit(60));
+      ? 'マイアルカナを保存すると、同じサーバーであなたが持っていないカードを出せる人だけに絞り込めます（今は全サーバー表示）。'
+      : '交換に出せるカードがある人を表示しています（全サーバー）。申請するにはアカウント登録とマイアルカナの保存が必要です。';
+    q = query(collection(db, 'arcanaTradeProfiles'), orderBy('lastActiveAt', 'desc'), limit(60));
   }
 
   searchLoading = true;
@@ -270,7 +271,6 @@ async function loadSearch() {
   }
 }
 $('search-refresh-btn').addEventListener('click', loadSearch);
-$('search-server').addEventListener('change', loadSearch);
 
 function renderSearch(people, missing) {
   const list = $('search-list');
@@ -297,7 +297,7 @@ function renderSearch(people, missing) {
       <div class="board-card-body">
         <div class="board-card-head">
           <strong class="arcana-person-name">${esc(p.displayName || '名無し')}</strong>
-          <span class="board-card-time">${timeAgo(toMs(p.lastActiveAt))}に更新</span>
+          <span class="board-card-time">${ready ? '' : `${esc(SERVER_LABEL[p.server] || '')}サーバー・`}${timeAgo(toMs(p.lastActiveAt))}に更新</span>
         </div>
         ${mutual ? '<span class="arcana-mutual">お互いにうれしい交換ができそう！</span>' : ''}
         <p class="arcana-person-label">${ready ? 'もらえるカード（あなたが持っていないもの）' : '交換に出せるカード'}</p>
