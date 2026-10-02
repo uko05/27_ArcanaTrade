@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 大きめの修正時だけ version.json と一緒に上げる(開きっぱなしのタブを自動で読み込み直す。TopPage00/shared/auto-reload.js参照) -->
+    <meta name="uko-reload-version" content="1" />
+    <title>原神アルカナ交換所｜幻想シアターのアルカナ交換相手探し - うーこの部屋</title>
+    <meta name="description" content="原神の幻想シアターで手に入るアルカナの、被ったカードを交換する相手を探せるサイト。持っているアルカナを登録すると、同じサーバーで自分が持っていないカードを出せる人が見つかります。UIDは交換が成立した相手にだけ公開されます。">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="うーこの部屋">
+    <meta property="og:locale" content="ja_JP">
+    <meta property="og:url" content="https://uko05.github.io/27_ArcanaTrade/">
+    <link rel="canonical" href="https://uko05.github.io/27_ArcanaTrade/">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "原神アルカナ交換所",
+        "url": "https://uko05.github.io/27_ArcanaTrade/",
+        "description": "原神の幻想シアターで手に入るアルカナの、被ったカードを交換する相手を探せるサイト。",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Any",
+        "inLanguage": "ja",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+        "isPartOf": { "@type": "WebSite", "name": "うーこの部屋", "url": "https://uko05.github.io/TopPage00/" }
+      }
+    </script>
+    <meta property="og:title" content="原神アルカナ交換所｜幻想シアターのアルカナ交換相手探し - うーこの部屋">
+    <meta property="og:description" content="被ったアルカナを交換する相手を、同じサーバーから探せます。UIDは交換が成立した相手にだけ公開されます。">
+    <!-- 公開時に追加: og:image / og:image:width / og:image:height / twitter:card / twitter:site -->
+
+    <link rel="stylesheet" href="styles.css?v=1.0" />
+
+    <link rel="icon" sizes="192x192" href="public/scripts/favicon_io/android-chrome-192x192.png">
+    <link rel="icon" sizes="512x512" href="public/scripts/favicon_io/android-chrome-512x512.png">
+    <link rel="apple-touch-icon" href="public/scripts/favicon_io/apple-touch-icon.png">
+</head>
+
+<body class="portal-page board-page">
+
+    <header class="portal-header">
+        <h1 id="site-title">原神アルカナ交換所</h1>
+        <p class="arcana-header-sub">幻想シアターで被ったアルカナを、交換してくれる相手を探そう</p>
+        <a href="https://uko05.github.io/24_AccountCenter/" class="account-link" id="account-link">アカウント管理（登録・申請には登録が必要です）</a>
+    </header>
+
+    <main class="portal-container board-container">
+
+        <nav class="board-tabs" role="tablist">
+            <button type="button" class="board-tab-btn active" data-tab="mine" role="tab">マイアルカナ</button>
+            <button type="button" class="board-tab-btn" data-tab="search" role="tab">さがす</button>
+            <button type="button" class="board-tab-btn" data-tab="trades" role="tab">交換<span class="board-tab-badge hidden" id="trades-tab-badge"></span></button>
+        </nav>
+
+        <!-- ===== マイアルカナ ===== -->
+        <section class="portal-section board-tab-panel" id="tab-panel-mine" role="tabpanel">
+            <h2>マイアルカナ</h2>
+
+            <div class="arcana-login-notice hidden" id="login-notice">
+                <p>アルカナの登録と交換申請には、<strong>アカウント登録（無料）</strong>が必要です。<br>登録しなくても「さがす」で交換相手の一覧は見られます。</p>
+                <a class="board-card-apply-btn arcana-login-btn" href="https://uko05.github.io/24_AccountCenter/">アカウント登録・ログインへ</a>
+            </div>
+
+            <form id="mine-form" class="board-form" autocomplete="off">
+                <div class="board-form-row-pair">
+                    <div class="board-form-row">
+                        <div class="board-form-row-head">
+                            <label for="input-name">名前<span class="board-required-mark">＊</span></label>
+                        </div>
+                        <input type="text" id="input-name" maxlength="20" placeholder="交換相手に表示される名前" />
+                    </div>
+                    <div class="board-form-row">
+                        <div class="board-form-row-head">
+                            <label for="input-server">サーバー<span class="board-required-mark">＊</span></label>
+                        </div>
+                        <select id="input-server">
+                            <option value="asia" selected>Asia</option>
+                            <option value="america">America</option>
+                            <option value="europe">Europe</option>
+                            <option value="sar">TW,HK,MO</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="board-form-row">
+                    <div class="board-form-row-head">
+                        <label for="input-uid">原神UID<span class="board-required-mark">＊</span></label>
+                        <span class="board-fixed-approval-badge">🔒交換が成立した相手にだけ公開</span>
+                    </div>
+                    <input type="text" id="input-uid" inputmode="numeric" maxlength="12" placeholder="例: 800123456" />
+                </div>
+
+                <h3 class="board-form-group-title">持っているアルカナ</h3>
+                <p class="arcana-grid-help">カードをタップするたびに1枚増えます。減らすときは「−」を押してください。<br>2枚以上持っているカードが「交換に出せるカード」になります（どのカードも1枚は手元に残します）。</p>
+                <div class="arcana-grid" id="mine-grid"></div>
+                <p class="arcana-summary" id="mine-summary"></p>
+
+                <div class="arcana-save-row">
+                    <button type="submit" class="board-card-apply-btn arcana-save-btn" id="mine-save-btn">保存する</button>
+                </div>
+                <p class="board-form-msg" id="mine-msg"></p>
+            </form>
+        </section>
+
+        <!-- ===== さがす ===== -->
+        <section class="portal-section board-tab-panel hidden" id="tab-panel-search" role="tabpanel">
+            <h2>交換相手をさがす</h2>
+            <p class="board-requests-desc" id="search-desc"></p>
+            <div class="arcana-search-controls">
+                <label class="arcana-search-server hidden" id="search-server-wrap">
+                    サーバー
+                    <select id="search-server">
+                        <option value="asia" selected>Asia</option>
+                        <option value="america">America</option>
+                        <option value="europe">Europe</option>
+                        <option value="sar">TW,HK,MO</option>
+                    </select>
+                </label>
+                <button type="button" class="board-card-apply-msg-btn" id="search-refresh-btn">一覧を更新</button>
+            </div>
+            <div class="board-list" id="search-list"></div>
+        </section>
+
+        <!-- ===== 交換 ===== -->
+        <section class="portal-section board-tab-panel hidden" id="tab-panel-trades" role="tabpanel">
+            <h2>交換</h2>
+            <div class="board-subtabs">
+                <button type="button" class="board-subtab-btn active" data-subtab="active">取引中<span class="board-tab-badge hidden" id="sub-badge-active"></span></button>
+                <button type="button" class="board-subtab-btn" data-subtab="received">届いた申請<span class="board-tab-badge hidden" id="sub-badge-received"></span></button>
+                <button type="button" class="board-subtab-btn" data-subtab="sent">送った申請</button>
+                <button type="button" class="board-subtab-btn" data-subtab="history">履歴</button>
+            </div>
+            <div class="board-list" id="trades-list"></div>
+        </section>
+
+        <!-- ===== このサイトについて ===== -->
+        <details class="portal-section arcana-about">
+            <summary>このサイトについて / About</summary>
+            <div class="arcana-about-body">
+                <p>原神の「幻想シアター」で手に入るアルカナのうち、被ったカードを交換する相手を探すためのサイトです。</p>
+                <ol>
+                    <li>「マイアルカナ」で、持っているアルカナの枚数とサーバー・UIDを登録します（アカウント登録が必要です）。</li>
+                    <li>「さがす」に、同じサーバーで<strong>あなたが持っていないカードを出せる人</strong>が表示されます。</li>
+                    <li>あなたが出すカードと、相手からもらうカードを1枚ずつ選んで交換申請します。</li>
+                    <li>相手が承認すると、お互いのUIDが見えるようになります。ゲーム内でフレンドになって交換してください。</li>
+                    <li>交換したら必ず「交換完了」を押してください。登録しているカードの枚数が自動で更新されます（押し忘れても3日後に自動で完了になります）。</li>
+                </ol>
+                <p>どのカードも1枚は手元に残る前提で、2枚以上あるカードだけが交換に出せます。</p>
+                <hr>
+                <p lang="en">A site for finding someone to trade duplicate Arcana cards from Genshin Impact's Imaginarium Theater. Register the cards you own, find players on the same server who can give you the cards you are missing, and send a 1-for-1 trade request. UIDs are revealed only after the request is accepted. (Japanese only)</p>
+            </div>
+        </details>
+
+    </main>
+
+    <!-- 交換申請ポップ -->
+    <div class="arcana-modal hidden" id="apply-modal">
+        <div class="arcana-modal-backdrop"></div>
+        <div class="arcana-modal-content">
+            <button type="button" class="arcana-modal-close" id="apply-close" aria-label="close">×</button>
+            <h3 class="arcana-modal-title">交換申請</h3>
+            <p class="arcana-modal-to" id="apply-to"></p>
+            <div class="arcana-apply-cols">
+                <div>
+                    <p class="arcana-apply-label">相手からもらうカード</p>
+                    <div class="arcana-pick-grid" id="apply-get"></div>
+                </div>
+                <div>
+                    <p class="arcana-apply-label">あなたが出すカード</p>
+                    <div class="arcana-pick-grid" id="apply-give"></div>
+                </div>
+            </div>
+            <textarea id="apply-message" class="apply-message-textarea" maxlength="100" placeholder="ひとこと（任意・100文字まで）"></textarea>
+            <p class="board-form-msg" id="apply-msg"></p>
+            <div class="arcana-modal-actions">
+                <button type="button" class="board-card-apply-btn" id="apply-send">申請する</button>
+            </div>
+        </div>
+    </div>
+
+    <span id="site-version" class="site-version">v1.0</span>
+
+    <script type="module" src="app.js?v=1"></script>
+    <script src="https://uko05.github.io/TopPage00/shared/sidebar.js"></script>
+</body>
+</html>
