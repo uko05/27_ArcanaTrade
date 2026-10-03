@@ -2116,6 +2116,10 @@ body.portal-page {
 .arcana-cell-reserved { font-size: 10px; color: #1e78ff; }
 .arcana-summary { text-align: center; font-size: 13px; color: #555; margin: 14px 0 6px; }
 .arcana-save-row { text-align: center; margin-top: 8px; }
+.arcana-save-row-top { margin: 0 auto 14px; max-width: 480px; }
+.arcana-lastcopy { display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 10px; font-size: 14px; color: #444; cursor: pointer; }
+.arcana-lastcopy input { width: 18px; height: 18px; }
+.arcana-lastcopy-help { margin: 4px 0 0; font-size: 11px; color: #888; }
 .arcana-save-btn { font-size: 15px; padding: 10px 36px; }
 
 .arcana-search-controls { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }

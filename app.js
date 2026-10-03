@@ -107,11 +107,12 @@ document.querySelectorAll('.board-subtab-btn').forEach((b) => b.addEventListener
 function renderMineGrid() {
   const grid = $('mine-grid');
   const reserved = myProfile?.reservedOut || {};
+  const allowLast = $('input-allow-last').checked;
   grid.innerHTML = '';
   ARCANA.forEach((a) => {
     const n = editCounts[a.id] || 0;
     const r = reserved[a.id] || 0;
-    const canGive = tradeableCount(editCounts, reserved, a.id);
+    const canGive = tradeableCount(editCounts, reserved, a.id, allowLast);
     const cell = document.createElement('div');
     cell.className = 'arcana-cell' + (n === 0 ? ' arcana-cell-none' : '') + (canGive >= 1 ? ' arcana-cell-spare' : '');
     cell.innerHTML = `
@@ -131,14 +132,14 @@ function renderMineGrid() {
     });
     cell.querySelector('.arcana-minus').addEventListener('click', () => {
       // 交換予定の分(+残す1枚)より少なくはできない
-      const min = r > 0 ? r + 1 : 0;
+      const min = r > 0 ? r + (allowLast ? 0 : 1) : 0;
       editCounts[a.id] = Math.max(min, n - 1);
       renderMineGrid();
     });
     grid.appendChild(cell);
   });
   const owned = ARCANA_IDS.filter((id) => (editCounts[id] || 0) > 0).length;
-  const spare = computeSpare(editCounts, reserved).length;
+  const spare = computeSpare(editCounts, reserved, allowLast).length;
   $('mine-summary').textContent = `持っている: ${owned} / 22種類　｜　交換に出せる: ${spare}種類　｜　持っていない: ${22 - owned}種類`;
 }
 
@@ -163,6 +164,7 @@ async function loadMine() {
       editCounts = { ...(myProfile.counts || {}) };
       $('input-name').value = myProfile.displayName || '';
       $('input-server').value = myProfile.server || 'asia';
+      $('input-allow-last').checked = !!myProfile.allowLastCopy;
     }
     if (privSnap.exists()) $('input-uid').value = privSnap.data().genshinUid || '';
     // まだ登録していない人は、フレンド承認板(25_FriendBoard)のプロフィールから名前・UID・サーバーを
@@ -216,12 +218,13 @@ $('mine-form').addEventListener('submit', async (ev) => {
   const counts = {};
   ARCANA_IDS.forEach((id) => { if (editCounts[id] > 0) counts[id] = editCounts[id]; });
   const reserved = myProfile?.reservedOut || {};
-  $('mine-save-btn').disabled = true;
+  const allowLastCopy = $('input-allow-last').checked;
+  setSaveButtonsDisabled(true);
   try {
     await setDoc(doc(db, 'arcanaTradePrivate', myId), { genshinUid: uid, updatedAt: serverTimestamp() });
     const data = {
-      userId: myId, displayName: name, server, counts,
-      spare: computeSpare(counts, reserved),
+      userId: myId, displayName: name, server, counts, allowLastCopy,
+      spare: computeSpare(counts, reserved, allowLastCopy),
       updatedAt: serverTimestamp(), lastActiveAt: serverTimestamp(),
     };
     // reservedOut はサーバー(Cloud Functions)だけが書くので、ここでは送らない(初回は空で作る)
@@ -233,9 +236,17 @@ $('mine-form').addEventListener('submit', async (ev) => {
     console.error('[mine] save failed', e);
     msg.textContent = '保存に失敗しました。時間をおいてもう一度お試しください。';
   } finally {
-    $('mine-save-btn').disabled = false;
+    setSaveButtonsDisabled(false);
   }
 });
+
+// 保存ボタンは2つ(カード一覧の上と下)。どちらもフォームの送信ボタン
+function setSaveButtonsDisabled(v) {
+  $('mine-save-btn').disabled = v;
+  $('mine-save-btn-top').disabled = v;
+}
+// チェックを切り替えたら、出せる枚数の表示をすぐ更新する(保存は保存ボタンで)
+$('input-allow-last').addEventListener('change', renderMineGrid);
 
 function hasOpenTrades() {
   return [...receivedReqs, ...sentReqs].some((r) => r.status === 'pending' || r.status === 'approved');
@@ -298,7 +309,7 @@ function renderSearch(people, missing) {
     list.innerHTML = '<p class="board-list-empty">今は該当する人がいません。</p>';
     return;
   }
-  const mySpare = ready ? computeSpare(myProfile.counts, myProfile.reservedOut) : [];
+  const mySpare = ready ? computeSpare(myProfile.counts, myProfile.reservedOut, !!myProfile.allowLastCopy) : [];
   // お互いにうれしい相手(相手が持っていないカードを自分が出せる)を上に並べる
   const scored = people.map((p) => {
     const canGet = ready ? (p.spare || []).filter((id) => missing.includes(id)) : (p.spare || []);
@@ -513,7 +524,7 @@ function renderTradeCard(r) {
   const foot = card.querySelector('.arcana-trade-foot');
 
   if (r.status === 'pending' && role === 'owner') {
-    const mineLeft = myProfile ? tradeableCount(myProfile.counts, myProfile.reservedOut, r.getCard) : 0;
+    const mineLeft = myProfile ? tradeableCount(myProfile.counts, myProfile.reservedOut, r.getCard, !!myProfile.allowLastCopy) : 0;
     const ok = button('承認する', 'board-card-apply-btn', async (b) => {
       b.disabled = true;
       try { await callApprove({ requestId: r.id }); showToast('承認しました。UIDを確認して、ゲーム内で交換してください。'); }

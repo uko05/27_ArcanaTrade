@@ -33,12 +33,14 @@ export const ARCANA = [
 export const ARCANA_IDS = ARCANA.map((a) => a.id);
 export const ARCANA_BY_ID = Object.fromEntries(ARCANA.map((a) => [a.id, a]));
 
-// 1枚は必ず手元に残すので、交換に出せる枚数 = 所持数 - 1 - 交換予定(承認済み・未完了)の枚数
-export function tradeableCount(counts, reservedOut, id) {
-  return Math.max(0, (counts?.[id] || 0) - 1 - (reservedOut?.[id] || 0));
+// 交換に出せる枚数 = 所持数 - 残す枚数 - 交換予定(承認済み・未完了)の枚数。
+// 残す枚数は通常1枚。「1枚所持も交換候補に出す」(allowLastCopy)をオンにした人は0枚(最後の1枚も出せる)。
+// 24_AccountCenter/functions/arcanaTrade.js の tradeable() と同じ計算にすること。
+export function tradeableCount(counts, reservedOut, id, allowLastCopy = false) {
+  return Math.max(0, (counts?.[id] || 0) - (allowLastCopy ? 0 : 1) - (reservedOut?.[id] || 0));
 }
 
 // 交換に出せるカード(1枚以上出せるもの)のid一覧。Firestoreの検索用に profile.spare として保存する
-export function computeSpare(counts, reservedOut) {
-  return ARCANA_IDS.filter((id) => tradeableCount(counts, reservedOut, id) >= 1);
+export function computeSpare(counts, reservedOut, allowLastCopy = false) {
+  return ARCANA_IDS.filter((id) => tradeableCount(counts, reservedOut, id, allowLastCopy) >= 1);
 }
