@@ -315,8 +315,11 @@ function renderSearch(people, missing) {
     const canGet = ready ? (p.spare || []).filter((id) => missing.includes(id)) : (p.spare || []);
     const theyLack = ARCANA_IDS.filter((id) => !((p.counts || {})[id] > 0));
     const canGive = mySpare.filter((id) => theyLack.includes(id));
-    return { p, canGet, canGive, mutual: canGive.length > 0 };
-  }).sort((a, b) => (b.mutual - a.mutual));
+    // もらえるカードを2枚以上(本当の被りとして)持っている人を上に。
+    // 「1枚所持も交換候補に出す」で最後の1枚を出している人は、その次に並べる
+    const dup = canGet.some((id) => ((p.counts || {})[id] || 0) >= 2);
+    return { p, canGet, canGive, mutual: canGive.length > 0, dup };
+  }).sort((a, b) => (b.dup - a.dup) || (b.mutual - a.mutual));
 
   list.innerHTML = '';
   scored.forEach(({ p, canGet, canGive, mutual }) => {
