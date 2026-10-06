@@ -16,9 +16,9 @@ import { getUserId, isLoggedIn, waitForAccount } from './userData.js';
 import { listenWhileVisible } from './visibleListener.js';
 import { ARCANA, ARCANA_IDS, ARCANA_BY_ID, tradeableCount, computeSpare } from './arcana.js';
 import {
-  doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, collection, query, where, orderBy, limit,
-  getDocs, onSnapshot, serverTimestamp, arrayUnion,
+  doc, setDoc, addDoc, updateDoc, deleteDoc, collection, query, where, orderBy, limit, serverTimestamp, arrayUnion,
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import { getDoc, getDocs, onSnapshot } from './fsTracked.js'; // 読み取り件数の集計(調査用、fsTracked.js参照)
 import { httpsCallable } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-functions.js";
 
 const SERVER_LABEL = { asia: 'Asia', america: 'America', europe: 'Europe', sar: 'TW,HK,MO' };
