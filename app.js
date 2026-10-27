@@ -376,7 +376,7 @@ function renderPick(elId, ids, getSel, setSel, highlight = null, counts = null) 
     b.type = 'button';
     b.className = 'arcana-pick' + (getSel() === id ? ' selected' : '') + (highlight && highlight.has(id) ? ' arcana-pick-wanted' : '');
     const n = counts ? (counts[id] || 0) : 0;
-    const cnt = n > 0 ? `<b class="arcana-chip-count ${n >= 2 ? 'arcana-chip-count-dup' : 'arcana-chip-count-one'}">相手×${n}</b>` : '';
+    const cnt = n > 0 ? `<b class="arcana-chip-count ${n >= 2 ? 'arcana-chip-count-dup' : 'arcana-chip-count-one'}">×${n}</b>` : '';
     b.innerHTML = `<img src="${a.img}" alt="" loading="lazy"><span>${esc(a.number)} ${esc(a.name)}</span>${cnt}${highlight && highlight.has(id) ? '<em>相手が未所持</em>' : ''}`;
     b.addEventListener('click', () => { setSel(id); renderPick(elId, ids, getSel, setSel, highlight, counts); });
     el.appendChild(b);
