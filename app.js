@@ -69,6 +69,15 @@ function cardChip(id, extraClass = '', count = null) {
   const cnt = count > 0 ? `<b class="arcana-chip-count ${count >= 2 ? 'arcana-chip-count-dup' : 'arcana-chip-count-one'}">×${count}</b>` : '';
   return `<span class="arcana-chip ${extraClass}"><img src="${a.img}" alt="" loading="lazy"><span>${esc(a.number)} ${esc(a.name)}</span>${cnt}</span>`;
 }
+// 取引欄のカード(マイアルカナと同じ大きさ。右下は自分の所持枚数)
+function tradeCardBig(id, extraClass = '') {
+  const a = ARCANA_BY_ID[id];
+  if (!a) return '';
+  const n = (myProfile && myProfile.counts && myProfile.counts[id]) || 0;
+  return `<span class="arcana-cell arcana-trade-big ${extraClass}${n === 0 ? ' arcana-cell-none' : ''}">
+    <span class="arcana-cell-card"><img src="${a.img}" alt="${esc(a.name)}" loading="lazy"><span class="arcana-cell-count">×${n}</span></span>
+    <span class="arcana-cell-name">${esc(a.number)} ${esc(a.name)}</span></span>`;
+}
 function showToast(text) {
   const el = document.createElement('div');
   el.className = 'app-toast app-toast-show';
@@ -181,7 +190,11 @@ async function loadMine() {
     const prev = myProfile;
     myProfile = snap.data();
     // サーバー側で枚数が変わった時(交換完了など)は編集中の枚数にも反映する
-    if (!prev || JSON.stringify(prev.counts) !== JSON.stringify(myProfile.counts)) editCounts = { ...(myProfile.counts || {}) };
+    if (!prev || JSON.stringify(prev.counts) !== JSON.stringify(myProfile.counts)) {
+      editCounts = { ...(myProfile.counts || {}) };
+      // 取引欄のカードにも自分の所持枚数を出しているので描き直す
+      if (!$('tab-panel-trades').classList.contains('hidden')) renderTrades();
+    }
     renderMineGrid();
   }));
 }
@@ -516,10 +529,11 @@ function renderTradeCard(r) {
       </div>
       ${statusHtml}
       <div class="arcana-trade-cards">
-        <div><p class="arcana-person-label">あなたが出す</p>${cardChip(iGive, 'arcana-chip-give')}</div>
+        <div><p class="arcana-person-label">あなたが出す</p>${tradeCardBig(iGive, 'arcana-trade-big-give')}</div>
         <span class="arcana-trade-arrow">⇄</span>
-        <div><p class="arcana-person-label">あなたがもらう</p>${cardChip(iGet, 'arcana-chip-get')}</div>
+        <div><p class="arcana-person-label">あなたがもらう</p>${tradeCardBig(iGet, 'arcana-trade-big-get')}</div>
       </div>
+      <p class="arcana-trade-note">×はあなたの今の所持枚数</p>
       ${r.message ? `<p class="board-card-comment">「${esc(r.message)}」</p>` : ''}
       <div class="arcana-trade-extra"></div>
       <div class="board-card-foot arcana-trade-foot"></div>
