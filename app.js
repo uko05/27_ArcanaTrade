@@ -363,11 +363,11 @@ function openApply(target, canGet, mySpare) {
   // 相手が持っていないカードを優先して並べる(相手にとってもうれしい交換になりやすい)
   const theyLack = new Set(ARCANA_IDS.filter((id) => !((target.counts || {})[id] > 0)));
   const giveList = [...mySpare].sort((a, b) => theyLack.has(b) - theyLack.has(a));
-  renderPick('apply-get', canGet, () => applyGet, (id) => { applyGet = id; });
+  renderPick('apply-get', canGet, () => applyGet, (id) => { applyGet = id; }, null, target.counts || {});
   renderPick('apply-give', giveList, () => applyGive, (id) => { applyGive = id; }, theyLack);
   $('apply-modal').classList.remove('hidden');
 }
-function renderPick(elId, ids, getSel, setSel, highlight = null) {
+function renderPick(elId, ids, getSel, setSel, highlight = null, counts = null) {
   const el = $(elId);
   el.innerHTML = '';
   ids.forEach((id) => {
@@ -375,8 +375,10 @@ function renderPick(elId, ids, getSel, setSel, highlight = null) {
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'arcana-pick' + (getSel() === id ? ' selected' : '') + (highlight && highlight.has(id) ? ' arcana-pick-wanted' : '');
-    b.innerHTML = `<img src="${a.img}" alt="" loading="lazy"><span>${esc(a.number)} ${esc(a.name)}</span>${highlight && highlight.has(id) ? '<em>相手が未所持</em>' : ''}`;
-    b.addEventListener('click', () => { setSel(id); renderPick(elId, ids, getSel, setSel, highlight); });
+    const n = counts ? (counts[id] || 0) : 0;
+    const cnt = n > 0 ? `<b class="arcana-chip-count ${n >= 2 ? 'arcana-chip-count-dup' : 'arcana-chip-count-one'}">相手×${n}</b>` : '';
+    b.innerHTML = `<img src="${a.img}" alt="" loading="lazy"><span>${esc(a.number)} ${esc(a.name)}</span>${cnt}${highlight && highlight.has(id) ? '<em>相手が未所持</em>' : ''}`;
+    b.addEventListener('click', () => { setSel(id); renderPick(elId, ids, getSel, setSel, highlight, counts); });
     el.appendChild(b);
   });
 }
