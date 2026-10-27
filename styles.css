@@ -2189,8 +2189,24 @@ body.portal-page {
 .arcana-modal-close { position: absolute; top: 8px; right: 12px; border: none; background: none; font-size: 22px; cursor: pointer; color: #888; }
 .arcana-modal-title { margin: 0 0 4px; text-align: center; }
 .arcana-modal-to { margin: 0 0 12px; text-align: center; font-size: 13px; color: #666; }
-.arcana-apply-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-@media (max-width: 520px) { .arcana-apply-cols { grid-template-columns: 1fr; } }
+.arcana-modal-content.arcana-modal-wide { width: min(94vw, 960px); }
+.arcana-apply-cols { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: stretch; }
+.arcana-apply-group { border-radius: 12px; padding: 10px; }
+.arcana-apply-group-give { background: #e3efff; }
+.arcana-apply-group-get { background: #fff3c4; }
+.arcana-apply-group-give .arcana-apply-label { color: #1f4f8f; }
+.arcana-apply-group-get .arcana-apply-label { color: #8a5a00; }
+.arcana-apply-arrows { display: flex; flex-direction: column; justify-content: center; gap: 14px; }
+.arcana-apply-arrow { display: block; width: 48px; height: 24px; }
+.arcana-apply-arrow svg { width: 100%; height: 100%; display: block; }
+.arcana-apply-arrow-give { color: #3d7bd9; }
+.arcana-apply-arrow-get { color: #d9a400; transform: scaleX(-1); }
+@media (max-width: 520px) {
+  .arcana-apply-cols { grid-template-columns: 1fr; }
+  .arcana-apply-arrows { flex-direction: row; gap: 18px; justify-content: center; }
+  .arcana-apply-arrow-give { transform: rotate(90deg); }
+  .arcana-apply-arrow-get { transform: rotate(-90deg); }
+}
 .arcana-apply-label { margin: 0 0 6px; font-size: 13px; font-weight: bold; color: #444; text-align: center; }
 .arcana-pick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 6px; }
 .arcana-pick {

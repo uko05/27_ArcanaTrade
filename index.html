@@ -35,7 +35,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@uko_dayo_">
 
-    <link rel="stylesheet" href="styles.css?v=1.5" />
+    <link rel="stylesheet" href="styles.css?v=1.6" />
 
     <link rel="icon" sizes="192x192" href="public/scripts/favicon_io/android-chrome-192x192.png">
     <link rel="icon" sizes="512x512" href="public/scripts/favicon_io/android-chrome-512x512.png">
@@ -160,18 +160,22 @@
     <!-- 交換申請ポップ -->
     <div class="arcana-modal hidden" id="apply-modal">
         <div class="arcana-modal-backdrop"></div>
-        <div class="arcana-modal-content">
+        <div class="arcana-modal-content arcana-modal-wide">
             <button type="button" class="arcana-modal-close" id="apply-close" aria-label="close">×</button>
             <h3 class="arcana-modal-title">交換申請</h3>
             <p class="arcana-modal-to" id="apply-to"></p>
             <div class="arcana-apply-cols">
-                <div>
-                    <p class="arcana-apply-label">相手からもらうカード</p>
-                    <div class="arcana-pick-grid" id="apply-get"></div>
-                </div>
-                <div>
+                <div class="arcana-apply-group arcana-apply-group-give">
                     <p class="arcana-apply-label">あなたが出すカード</p>
                     <div class="arcana-pick-grid" id="apply-give"></div>
+                </div>
+                <div class="arcana-apply-arrows" aria-hidden="true">
+                    <span class="arcana-apply-arrow arcana-apply-arrow-give"><svg viewBox="0 0 48 24" aria-hidden="true"><path d="M2 12h40M32 3l10 9-10 9" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                    <span class="arcana-apply-arrow arcana-apply-arrow-get"><svg viewBox="0 0 48 24" aria-hidden="true"><path d="M2 12h40M32 3l10 9-10 9" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                </div>
+                <div class="arcana-apply-group arcana-apply-group-get">
+                    <p class="arcana-apply-label">相手からもらうカード</p>
+                    <div class="arcana-pick-grid" id="apply-get"></div>
                 </div>
             </div>
             <textarea id="apply-message" class="apply-message-textarea" maxlength="100" placeholder="ひとこと（任意・100文字まで）"></textarea>
@@ -182,7 +186,7 @@
         </div>
     </div>
 
-    <span id="site-version" class="site-version">v1.8</span>
+    <span id="site-version" class="site-version">v1.9</span>
 
     <script type="module" src="app.js?v=8"></script>
     <script src="https://uko05.github.io/TopPage00/shared/sidebar.js"></script>
