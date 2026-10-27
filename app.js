@@ -66,7 +66,7 @@ function timeAgo(ms) {
 function cardChip(id, extraClass = '', count = null) {
   const a = ARCANA_BY_ID[id];
   if (!a) return '';
-  const cnt = count > 0 ? `<b class="arcana-chip-count">×${count}</b>` : '';
+  const cnt = count > 0 ? `<b class="arcana-chip-count ${count >= 2 ? 'arcana-chip-count-dup' : 'arcana-chip-count-one'}">×${count}</b>` : '';
   return `<span class="arcana-chip ${extraClass}"><img src="${a.img}" alt="" loading="lazy"><span>${esc(a.number)} ${esc(a.name)}</span>${cnt}</span>`;
 }
 function showToast(text) {
@@ -336,8 +336,6 @@ function renderSearch(people, missing) {
         ${mutual ? '<span class="arcana-mutual">お互いにうれしい交換ができそう！</span>' : ''}
         <p class="arcana-person-label">${ready ? 'もらえるカード（あなたが持っていないもの・×は相手の所持枚数）' : '交換に出せるカード（×は所持枚数）'}</p>
         <div class="arcana-chips">${canGet.map((id) => cardChip(id, 'arcana-chip-get', (p.counts || {})[id] || 0)).join('')}</div>
-        ${ready && canGive.length ? `<p class="arcana-person-label">相手が持っていない、あなたの出せるカード（×はあなたの所持枚数）</p>
-        <div class="arcana-chips">${canGive.map((id) => cardChip(id, 'arcana-chip-give', (myProfile.counts || {})[id] || 0)).join('')}</div>` : ''}
         <div class="board-card-foot arcana-person-foot"></div>
       </div>`;
     const foot = card.querySelector('.arcana-person-foot');
