@@ -379,7 +379,7 @@ function openApply(target, canGet, mySpare) {
   const theyLack = new Set(ARCANA_IDS.filter((id) => !((target.counts || {})[id] > 0)));
   const giveList = [...mySpare].sort((a, b) => theyLack.has(b) - theyLack.has(a));
   renderPick('apply-get', canGet, () => applyGet, (id) => { applyGet = id; }, null, target.counts || {});
-  renderPick('apply-give', giveList, () => applyGive, (id) => { applyGive = id; }, theyLack);
+  renderPick('apply-give', giveList, () => applyGive, (id) => { applyGive = id; }, theyLack, myProfile.counts || {});
   $('apply-modal').classList.remove('hidden');
 }
 function renderPick(elId, ids, getSel, setSel, highlight = null, counts = null) {
