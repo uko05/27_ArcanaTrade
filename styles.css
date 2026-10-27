@@ -2146,13 +2146,14 @@ body.portal-page {
 
 .arcana-trade { display: block; margin-bottom: 12px; }
 .arcana-trade-active { border-color: #2e7d32; }
-.arcana-trade-cards { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
+.arcana-trade-cards { display: flex; align-items: flex-end; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
+.arcana-trade-cards .arcana-person-label { text-align: center; }
 .arcana-trade-arrow { font-size: 20px; color: #999; padding-bottom: 6px; align-self: center; }
 .arcana-trade-big { width: 130px; box-sizing: border-box; }
 .arcana-trade-big-give { border-color: #b9d3fb; background: #e3efff; }
 .arcana-trade-big-get { border-color: #f3dc85; background: #fff3c4; }
 .arcana-trade-big .arcana-cell-card { cursor: default; display: block; }
-.arcana-trade-note { margin: 4px 0 0; font-size: 11px; color: #888; }
+.arcana-trade-note { margin: 4px 0 0; font-size: 11px; color: #888; text-align: center; }
 @media (max-width: 480px) { .arcana-trade-big { width: 110px; } }
 .arcana-trade-foot { margin-top: 12px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
 .arcana-status { display: inline-block; margin-top: 6px; font-size: 12px; font-weight: bold; color: #888; }

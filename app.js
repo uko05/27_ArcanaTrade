@@ -69,13 +69,15 @@ function cardChip(id, extraClass = '', count = null) {
   const cnt = count > 0 ? `<b class="arcana-chip-count ${count >= 2 ? 'arcana-chip-count-dup' : 'arcana-chip-count-one'}">×${count}</b>` : '';
   return `<span class="arcana-chip ${extraClass}"><img src="${a.img}" alt="" loading="lazy"><span>${esc(a.number)} ${esc(a.name)}</span>${cnt}</span>`;
 }
-// 取引欄のカード(マイアルカナと同じ大きさ。右下は自分の所持枚数)
-function tradeCardBig(id, extraClass = '') {
+// 取引欄のカード(マイアルカナと同じ大きさ)。右下は自分の所持枚数。
+// delta(-1/+1)を渡すと「今→交換後」の枚数を出す
+function tradeCardBig(id, extraClass = '', delta = 0) {
   const a = ARCANA_BY_ID[id];
   if (!a) return '';
   const n = (myProfile && myProfile.counts && myProfile.counts[id]) || 0;
-  return `<span class="arcana-cell arcana-trade-big ${extraClass}${n === 0 ? ' arcana-cell-none' : ''}">
-    <span class="arcana-cell-card"><img src="${a.img}" alt="${esc(a.name)}" loading="lazy"><span class="arcana-cell-count">×${n}</span></span>
+  const label = delta ? `${n}→${Math.max(0, n + delta)}` : `×${n}`;
+  return `<span class="arcana-cell arcana-trade-big ${extraClass}${n === 0 && !delta ? ' arcana-cell-none' : ''}">
+    <span class="arcana-cell-card"><img src="${a.img}" alt="${esc(a.name)}" loading="lazy"><span class="arcana-cell-count">${label}</span></span>
     <span class="arcana-cell-name">${esc(a.number)} ${esc(a.name)}</span></span>`;
 }
 function showToast(text) {
@@ -516,6 +518,8 @@ function renderTradeCard(r) {
   const iGet = role === 'owner' ? r.giveCard : r.getCard;
   const card = document.createElement('div');
   card.className = 'board-card arcana-trade' + (r.status === 'approved' ? ' arcana-trade-active' : '');
+  // まだ自分の枚数に反映されていない取引(申請中・承認後で自分が完了を押す前)は、交換前→交換後を出す
+  const showChange = r.status === 'pending' || (r.status === 'approved' && !myDone(r));
   let statusHtml = '';
   if (STATUS_LABEL[r.status]) {
     const reason = r.status === 'withdrawn' && WITHDRAW_REASON[r.withdrawReason] ? `（${WITHDRAW_REASON[r.withdrawReason]}）` : '';
@@ -529,11 +533,11 @@ function renderTradeCard(r) {
       </div>
       ${statusHtml}
       <div class="arcana-trade-cards">
-        <div><p class="arcana-person-label">あなたが出す</p>${tradeCardBig(iGive, 'arcana-trade-big-give')}</div>
+        <div><p class="arcana-person-label">あなたが出す</p>${tradeCardBig(iGive, 'arcana-trade-big-give', showChange ? -1 : 0)}</div>
         <span class="arcana-trade-arrow">⇄</span>
-        <div><p class="arcana-person-label">あなたがもらう</p>${tradeCardBig(iGet, 'arcana-trade-big-get')}</div>
+        <div><p class="arcana-person-label">あなたがもらう</p>${tradeCardBig(iGet, 'arcana-trade-big-get', showChange ? 1 : 0)}</div>
       </div>
-      <p class="arcana-trade-note">×はあなたの今の所持枚数</p>
+      <p class="arcana-trade-note">${showChange ? 'あなたの所持枚数（今→交換後）' : '×はあなたの今の所持枚数'}</p>
       ${r.message ? `<p class="board-card-comment">「${esc(r.message)}」</p>` : ''}
       <div class="arcana-trade-extra"></div>
       <div class="board-card-foot arcana-trade-foot"></div>
