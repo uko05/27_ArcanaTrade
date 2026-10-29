@@ -2237,3 +2237,13 @@ body.portal-page {
 #mine-form > .board-form-group-title,
 #mine-form > .arcana-grid-help { width: 100%; max-width: 480px; margin-left: auto; margin-right: auto; }
 .arcana-cell-name { font-size: 13px; }
+
+/* 掲載の取り下げ(目立たせすぎない控えめなボタン) */
+.arcana-withdraw-row { margin: 28px auto 0; padding-top: 16px; border-top: 1px solid #eee; text-align: center; max-width: 480px; }
+.arcana-withdraw-btn {
+  border: 1px solid #e0a0a0; background: #fff; color: #c62828; border-radius: 999px;
+  padding: 6px 18px; font-family: inherit; font-size: 13px; cursor: pointer;
+}
+.arcana-withdraw-btn:hover { background: #fff5f5; }
+.arcana-withdraw-btn:disabled { opacity: 0.5; cursor: default; }
+.arcana-withdraw-help { margin: 6px 0 0; font-size: 11px; color: #888; }

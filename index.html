@@ -35,7 +35,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@uko_dayo_">
 
-    <link rel="stylesheet" href="styles.css?v=1.8" />
+    <link rel="stylesheet" href="styles.css?v=1.9" />
 
     <link rel="icon" sizes="192x192" href="public/scripts/favicon_io/android-chrome-192x192.png">
     <link rel="icon" sizes="512x512" href="public/scripts/favicon_io/android-chrome-512x512.png">
@@ -112,6 +112,10 @@
                     <button type="submit" class="board-card-apply-btn arcana-save-btn" id="mine-save-btn">保存する</button>
                 </div>
                 <p class="board-form-msg" id="mine-msg"></p>
+                <div class="arcana-withdraw-row hidden" id="mine-withdraw-row">
+                    <button type="button" class="arcana-withdraw-btn" id="mine-withdraw-btn">掲載を取り下げる</button>
+                    <p class="arcana-withdraw-help">「さがす」の一覧に出なくなります。登録したアルカナの枚数とUIDも削除します。</p>
+                </div>
             </form>
         </section>
 
@@ -186,9 +190,9 @@
         </div>
     </div>
 
-    <span id="site-version" class="site-version">v1.15</span>
+    <span id="site-version" class="site-version">v1.16</span>
 
-    <script type="module" src="app.js?v=13"></script>
+    <script type="module" src="app.js?v=14"></script>
     <script src="https://uko05.github.io/TopPage00/shared/sidebar.js"></script>
 </body>
 </html>

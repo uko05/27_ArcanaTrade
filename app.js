@@ -153,6 +153,7 @@ function renderMineGrid() {
   const owned = ARCANA_IDS.filter((id) => (editCounts[id] || 0) > 0).length;
   const spare = computeSpare(editCounts, reserved, allowLast).length;
   $('mine-summary').textContent = `持っている: ${owned} / 22種類　｜　交換に出せる: ${spare}種類　｜　持っていない: ${22 - owned}種類`;
+  $('mine-withdraw-row').classList.toggle('hidden', !(isLoggedIn() && myProfile));
 }
 
 async function loadMine() {
@@ -253,6 +254,35 @@ $('mine-form').addEventListener('submit', async (ev) => {
     msg.textContent = '保存に失敗しました。時間をおいてもう一度お試しください。';
   } finally {
     setSaveButtonsDisabled(false);
+  }
+});
+
+// 掲載の取り下げ: プロフィールとUIDを消して「さがす」に出なくする。
+// 申請中・取引中の交換がある間はできない(相手の申請が宙に浮くため)
+$('mine-withdraw-btn').addEventListener('click', async () => {
+  const msg = $('mine-msg');
+  msg.className = 'board-form-msg';
+  if (!isLoggedIn() || !myProfile) return;
+  if (hasOpenTrades()) {
+    msg.textContent = '申請中・取引中の交換があるあいだは取り下げできません。「交換」タブで取り下げ・お断り・交換完了をしてからお試しください。';
+    return;
+  }
+  if (!confirm('掲載を取り下げますか？\n登録したアルカナの枚数とUIDも削除されます。')) return;
+  $('mine-withdraw-btn').disabled = true;
+  try {
+    await deleteDoc(doc(db, 'arcanaTradeProfiles', myId));
+    await deleteDoc(doc(db, 'arcanaTradePrivate', myId)).catch(() => {});
+    myProfile = null;
+    editCounts = {};
+    $('input-uid').value = '';
+    renderMineGrid();
+    msg.textContent = '掲載を取り下げました。もう一度保存すると、また「さがす」に出るようになります。';
+    msg.classList.add('ok');
+  } catch (e) {
+    console.error('[mine] withdraw failed', e);
+    msg.textContent = '取り下げに失敗しました。時間をおいてもう一度お試しください。';
+  } finally {
+    $('mine-withdraw-btn').disabled = false;
   }
 });
 
